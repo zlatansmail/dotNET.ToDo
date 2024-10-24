@@ -1,8 +1,22 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model ToDoViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ToDoList)
+        {
+            <tr>
+                <td class="todos-column" scope="row">@item.Id</td>
+                <td class="todos-column">@item.Name</td>
+                <td class="buttons-column">
+                    <input type="submit" value="Delete" onClick="deleteToDo(@item.Id)" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

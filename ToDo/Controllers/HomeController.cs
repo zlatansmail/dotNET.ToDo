@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using ToDo.Models;
+using ToDo.Models.ViewModels;
 
 namespace ToDo.Controllers;
 
@@ -15,17 +17,71 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var toDoListViewModel = GetAllToDos();
+        return View(toDoListViewModel);
     }
 
-    public IActionResult Privacy()
+    internal ToDoViewModel GetAllToDos()
     {
-        return View();
+        List<ToDoItem> toDoList = new();
+
+        using (SqliteConnection con =
+            new SqliteConnection("Data Source=db.sqlite"))
+        {
+            using (var tableCmd = con.CreateCommand())
+            {
+                con.Open();
+                tableCmd.CommandText = "SELECT * FROM todo";
+
+                using (var reader = tableCmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            toDoList.Add(new ToDoItem
+                            {
+                                Id = reader.GetInt32(0),
+                                Name = reader.GetString(1)
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return new ToDoViewModel
+                        {
+                            ToDoList = toDoList
+                        };
+                    }
+                }
+            }
+        }
+        return new ToDoViewModel
+        {
+            ToDoList = toDoList
+        };
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public RedirectResult Insert(ToDoItem todo)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        using (SqliteConnection con =
+        new SqliteConnection("Data Source=db.sqlite"))
+        {
+            using (var tableCmd = con.CreateCommand())
+            {
+                con.Open();
+                tableCmd.CommandText = $"INSERT INTO todo (name) VALUES ('{todo.Name}')";
+                try
+                {
+                    tableCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+        return Redirect("https://localhost:5000/");
     }
+
 }
