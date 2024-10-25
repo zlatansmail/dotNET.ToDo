@@ -120,7 +120,7 @@ public class HomeController : Controller
                 }
             }
         }
-        return Redirect("https://localhost:5000/");
+        return Redirect("https://localhost:5001/");
     }
     [HttpPost]
     public JsonResult Delete(int id)
@@ -141,8 +141,7 @@ public class HomeController : Controller
 
     public RedirectResult Update(ToDoItem toDo)
     {
-        using (SqliteConnection con =
-               new SqliteConnection("Data Source=db.sqlite"))
+        using (SqliteConnection con = new SqliteConnection("Data Source=db.sqlite"))
         {
             using (var tableCmd = con.CreateCommand())
             {
@@ -158,8 +157,7 @@ public class HomeController : Controller
                 }
             }
         }
-
-        return Redirect("https://localhost:5000/");
+        return Redirect("https://localhost:5001/");
     }
 
 

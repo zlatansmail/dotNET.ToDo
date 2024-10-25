@@ -14,7 +14,7 @@ function deleteToDo(i) {
   });
 }
 
-function populateForm(i) {
+function populateForm(i) { 
     $.ajax({
         url: "Home/PopulateForm",
         type: "GET",
@@ -23,7 +23,7 @@ function populateForm(i) {
         $("#ToDo_Name").val(response.name);
         $("#ToDo_Id").val(response.id);
         $("#form-button").val("Update ToDo");
-        $("#form-button").attr("action", "Home/Update");
+        $("#form-button").attr("asp-action", "Update");
         }
     });
 }
